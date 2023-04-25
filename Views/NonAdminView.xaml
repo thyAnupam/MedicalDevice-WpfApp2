@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="WpfApp2.Views.NonAdminView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfApp2.Views"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="600"
+      >
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Current user:"
+                   FontSize="15"
+                   FontWeight="Bold"
+                   VerticalAlignment="Top"
+                   
+                   TextAlignment="Center"
+                   Background="White" 
+                    Foreground="Navy" Grid.Row="2" Grid.Column="0" Margin="0,95,0,0" />
+
+        <TextBlock Text="User group:"
+                   FontSize="15"
+                   FontWeight="Bold"
+                   VerticalAlignment="Top"
+                   
+                   TextAlignment="Center"
+                   Background="White" 
+                    Foreground="Navy" Grid.Row="2" Grid.Column="0" Margin="0,120,0,0" />
+
+        <TextBlock x:Name="curr_user" FontSize="15" 
+                   VerticalAlignment="Top"
+                   TextAlignment="Left"
+                   Background="White" 
+                     Grid.Row="2" Grid.Column="1" Margin="0,95,0,0"></TextBlock>
+
+        <TextBlock x:Name="curr_user_group"
+                   FontSize="15"
+                   VerticalAlignment="Top"
+                   TextAlignment="Left"
+                   Background="White" 
+                     Grid.Row="2" Grid.Column="1" Margin="0,120,0,0" />
+
+    </Grid>
+</UserControl>

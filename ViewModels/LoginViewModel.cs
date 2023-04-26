@@ -74,7 +74,7 @@ namespace WpfApp2.ViewModels
 
         public void GrantAccess(User u)
         {
-            MainView m = new MainView(u);
+            MainView m = new MainView(_context, u);
             _navigationService.NavigateTo(m);
 
         }

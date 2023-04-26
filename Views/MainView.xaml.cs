@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WpfApp2.Repository;
 using WpfApp2.Repository.Models;
+using WpfApp2.ViewModels;
 using WpfApp2.ViewModels.Services;
 
 namespace WpfApp2.Views
@@ -23,11 +24,13 @@ namespace WpfApp2.Views
     public partial class MainView : Page, INavigationService
     {
         User _user;
-        public MainView(User user)
+        MoDbContext _dbContext;
+        public MainView(MoDbContext context, User user)
         {
             InitializeComponent();
-            
             _user = user;
+            _dbContext = context;
+            DataContext = new MainViewModel(_dbContext, this, _user);
 
         }
         public void NavigateTo(object page)
@@ -36,35 +39,7 @@ namespace WpfApp2.Views
 
         }
 
-        private void SearchPatientButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void AddPatientButton_Click(object sender, RoutedEventArgs e)
-        {
-            ContentArea.Content = new AddPatientView();
-
-            (ContentArea.Content as AddPatientView).PatientAdded += (sender, e) =>
-            {
-                ContentArea.Content = new AddDataToPatientUserControl();
-            };
-
-        }
-
-        private void UserManagementButton_Click(object sender, RoutedEventArgs e)
-        {
-            if(_user.RoleId == 1)
-            {
-                ContentArea.Content = new AdminView(_user);
-            }
-            else
-            {
-                ContentArea.Content = new NonAdminView(_user);
-            }
-
-        }
-
+        
         
     }
 }

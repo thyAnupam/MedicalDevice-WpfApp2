@@ -3,8 +3,8 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:WpfApp2.Views"
-      mc:Ignorable="d" 
+      xmlns:local="clr-namespace:WpfApp2.Views" xmlns:viewmodels="clr-namespace:WpfApp2.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:AdminViewModel}"
+             mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="600"
       >
 
@@ -51,9 +51,9 @@
 
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom">
-                <TextBox Name="usernameTextBox" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left"/>
-                <TextBox Name="fnameTextBox" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left"/>
-                <TextBox Name="lnameTextBox" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left"/>
+                <TextBox Name="usernameTextBox" Text="{Binding Username, Mode=TwoWay}" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left"/>
+                <TextBox Name="fnameTextBox" Text="{Binding FirstName, Mode=TwoWay}" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left"/>
+                <TextBox Name="lnameTextBox" Text="{Binding LastName, Mode=TwoWay}" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left"/>
             </StackPanel>
 
             <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Top">
@@ -64,28 +64,28 @@
             </StackPanel>
 
             <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top">
-                <TextBox Name="passTextBox" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left" />
-                <TextBox Name="mailTextBox" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left"/>
-                <ComboBox Name="combo" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left">
+                <TextBox Name="passTextBox" Text="{Binding Password, Mode=TwoWay}" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left" />
+                <TextBox Name="mailTextBox" Text="{Binding Email, Mode=TwoWay}" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left"/>
+                <ComboBox Name="combo" Text="{Binding UserGroup, Mode=TwoWay}" Padding="3" Margin="2" Width="170" HorizontalAlignment="Left">
                     <ComboBoxItem Content="Administrator"></ComboBoxItem>
                     <ComboBoxItem Content="Doctor"></ComboBoxItem>
                     <ComboBoxItem Content="Operator"></ComboBoxItem>
                 </ComboBox>
-                <Button x:Name="AddUser" FontSize="15" Content="Add" Margin="10" Background="#3A82D6" Width="60" Click="AddUser_Click"/>
+                <Button x:Name="AddUser" FontSize="15" Content="Add" Margin="10" Background="#3A82D6" Width="60" Command="{Binding AddUserCommand}"/>
             </StackPanel>
 
-            <StatusBar Name="SBar" FontSize="15" Height="30" VerticalAlignment="Bottom"  
+            <Label Content="{Binding ErrorMessage, Mode=OneWay}"  FontSize="15" Height="30" VerticalAlignment="Bottom"  
            Background="white" Grid.Row="1" Grid.Column="1">
-                Please enter user details
-            </StatusBar>
+                
+            </Label>
 
-            <TextBlock x:Name="curr_user" FontSize="15" 
+            <TextBlock x:Name="curr_user" FontSize="15" Text="{Binding CurrentUsername, Mode=OneWay}"
                    VerticalAlignment="Top"
                    TextAlignment="Left"
                    Background="White" 
                      Grid.Row="2" Grid.Column="1" Margin="0,95,0,0"></TextBlock>
 
-            <TextBlock x:Name="curr_user_group"
+        <TextBlock x:Name="curr_user_group" Text="{Binding Role, Mode=OneWay}"
                    FontSize="15"
                    VerticalAlignment="Top"
                    TextAlignment="Left"

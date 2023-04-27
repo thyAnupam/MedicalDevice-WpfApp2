@@ -17,6 +17,7 @@ using WpfApp2.Repository;
 using System.Resources;
 using WpfApp2.Repository.Models;
 using WpfApp2.Resources;
+using WpfApp2.ViewModels;
 
 namespace WpfApp2.Views
 {
@@ -30,50 +31,9 @@ namespace WpfApp2.Views
         {
             InitializeComponent();
             _db = new MoDbContext();
-
-
-            curr_user.Text = user.Username;
-            int roleid = user.RoleId;
-            if(roleid == 1) { curr_user_group.Text = "Administrator"; }
-            if (roleid == 2) { curr_user_group.Text = "Doctor"; }
-            if (roleid == 3) { curr_user_group.Text = "Operator"; }
-            //curr_user_group.Text = context.Users.FirstOrDefault(u => u.Username == uname);
+            DataContext = new AdminViewModel(_db, user);
         }
 
-        private void AddUser_Click(object sender, RoutedEventArgs e)
-        {
-
-            var uname = usernameTextBox.Text;
-            var fname = fnameTextBox.Text;
-            var lname = lnameTextBox.Text;
-            var pass = passTextBox.Text;
-            var email = mailTextBox.Text;
-            var userGroup = combo.Text;
-
-            if(uname =="" || fname == "" || lname == "" || pass == "" || email=="" || userGroup == "")
-            {
-                SBar.Items.Clear();
-                TextBox tb = new TextBox();
-                tb.Text = "Please enter everything";
-                SBar.Items.Add(tb);
-            }
-
-            else
-            {
-                User user = new User { Username=uname, FirstName=fname, LastName=lname, Password=pass, Email=email, RoleId = combo.SelectedIndex+1};
-
-                
-                _db.AddAsync(user);
-                _db.SaveChanges();
-
-
-                SBar.Items.Clear();
-                TextBox tb = new TextBox();
-                tb.Text = "User added";
-                SBar.Items.Add(tb);
-
-            }
-            
-        }
+        
     }
 }

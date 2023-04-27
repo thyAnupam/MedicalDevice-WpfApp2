@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp2.Repository.Models;
+using WpfApp2.ViewModels;
+
 
 namespace WpfApp2.Views
 {
@@ -24,12 +26,8 @@ namespace WpfApp2.Views
         public NonAdminView(User user)
         {
             InitializeComponent();
+            DataContext = new NonAdminViewModel(user);
 
-            curr_user.Text = user.Username;
-            int roleid = user.RoleId;
-            if (roleid == 1) { curr_user_group.Text = "Administrator"; }
-            if (roleid == 2) { curr_user_group.Text = "Doctor"; }
-            if (roleid == 3) { curr_user_group.Text = "Operator"; }
         }
     }
 }

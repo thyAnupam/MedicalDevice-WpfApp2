@@ -35,13 +35,13 @@ namespace WpfApp2.ViewModels
         public void ShowSearch()
         {
 
-
+            _navigationService.NavigateTo(new SearchPatientView());
 
         }
 
         public void ShowAddPatient()
         {
-            AddPatientView addPatientView = new AddPatientView();
+            AddPatientView addPatientView = new AddPatientView(_navigationService);
             _navigationService.NavigateTo(addPatientView);
 
 

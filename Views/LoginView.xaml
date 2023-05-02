@@ -13,20 +13,22 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
+        
+        
         <TextBlock Text="Please enter username and password to proceed"
                    FontSize="15"
                    FontWeight="Bold"
-                   VerticalAlignment="Top"
+                   VerticalAlignment="Bottom"
                    HorizontalAlignment="Center"
-                   Background="White" 
-                    Foreground="Navy" Margin="0,60,0,0" Grid.Row="0" />
+                   
+                    Foreground="#0c188e" Margin="0,60,0,0" Grid.Row="0" />
 
         <TextBlock Text="User"
                    FontSize="15"
                    FontWeight="Bold"
                    TextAlignment="Center"
-                   Background="White" 
-                    Foreground="Navy" Margin="83,35,377,279" Grid.Row="1" Width="40" Height="20" />
+                   
+                    Foreground="#0c188e" Margin="83,35,377,279" Grid.Row="1" Width="40" Height="20" />
 
         <TextBox  Text="{Binding Username, Mode=TwoWay}"
                   Grid.Row="1"
@@ -46,18 +48,18 @@
                    Width="80" Height="20"
                    
                    TextAlignment="Center"
-                   Background="White" 
-                    Foreground="Navy" Margin="63,81,357,230" Grid.Row="1" />
+                    
+                    Foreground="#0c188e" Margin="63,81,357,230" Grid.Row="1" />
 
         <Button Name ="login"
                 Content="Login"
                 BorderBrush="Black"
-                Background="White"
+                Background="#0c188e"
                 FontSize="15"
                 BorderThickness="1"
-                Grid.Row="1" Command="{Binding LoginCommand}" Width="60" Height="25" Margin="231,125,209,145" />
+                Grid.Row="1" Command="{Binding LoginCommand}" Width="80" Height="30" Margin="231,125,209,145" />
         
-        <Label Content="{Binding ErrorMessage, Mode=OneWay}" Grid.Row="1" Foreground="Black" Width="150" Height="30" Margin="175,174,175,130" FontWeight="Bold"/>
+        <Label Content="{Binding ErrorMessage, Mode=OneWay}" Grid.Row="1" Foreground="Black" Width="150" Height="30" Margin="191,172,179,132" FontWeight="Bold" FontSize="15" HorizontalContentAlignment="Center"  />
 
     </Grid>
 </Page>

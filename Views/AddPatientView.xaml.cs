@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp2.Repository.Models;
+using WpfApp2.ViewModels;
+using WpfApp2.ViewModels.Services;
 
 namespace WpfApp2.Views
 {
@@ -21,17 +23,18 @@ namespace WpfApp2.Views
     /// </summary>
     public partial class AddPatientView : UserControl
     {
-        public event EventHandler PatientAdded;
+        //public event EventHandler PatientAdded;
         
         //public event EventHandler<User> u;
-
-        public AddPatientView()
+        //private INavigationService navigationService;
+        public AddPatientView(INavigationService s)
         {
             InitializeComponent();
+            DataContext = new AddPatientViewModel(s);
             
         }
 
-        private void AddPatientButton_Click(object sender, RoutedEventArgs e)
+        /*private void AddPatientButton_Click(object sender, RoutedEventArgs e)
         {
 
             //Take inputs
@@ -41,6 +44,6 @@ namespace WpfApp2.Views
 
             
             PatientAdded?.Invoke(this, EventArgs.Empty);
-        }
+        }*/
     }
 }

@@ -30,7 +30,7 @@
                    VerticalAlignment="Top"
                    
                    TextAlignment="Center"
-                   Background="White" 
+                   
                     Foreground="Navy" Grid.Row="2" Grid.Column="0" Margin="0,95,0,0" />
 
             <TextBlock Text="User group:"
@@ -39,15 +39,15 @@
                    VerticalAlignment="Top"
                    
                    TextAlignment="Center"
-                   Background="White" 
+                   
                     Foreground="Navy" Grid.Row="2" Grid.Column="0" Margin="0,120,0,0" />
 
 
 
             <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom">
-                <TextBlock Text="Username" Background="White" FontSize="18" TextAlignment="Center" Margin="2"/>
-                <TextBlock Text="First name" Background="White" FontSize="18" TextAlignment="Center" Margin="2"/>
-                <TextBlock Text="Last name" Background="White"  FontSize="18" TextAlignment="Center" Margin="2"/>
+                <TextBlock Text="Username"  FontSize="18" TextAlignment="Center" Margin="2"/>
+                <TextBlock Text="First name"  FontSize="18" TextAlignment="Center" Margin="2"/>
+                <TextBlock Text="Last name"   FontSize="18" TextAlignment="Center" Margin="2"/>
 
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom">
@@ -57,9 +57,9 @@
             </StackPanel>
 
             <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Top">
-                <TextBlock Text="Password " Background="White" FontSize="18" TextAlignment="Center" Margin="2"/>
-                <TextBlock Text="Email" Background="White" FontSize="18" TextAlignment="Center" Margin="2"/>
-                <TextBlock Text="User group" Background="White"  FontSize="18" TextAlignment="Center" Margin="2"/>
+                <TextBlock Text="Password "  FontSize="18" TextAlignment="Center" Margin="2"/>
+                <TextBlock Text="Email"  FontSize="18" TextAlignment="Center" Margin="2"/>
+                <TextBlock Text="User group"   FontSize="18" TextAlignment="Center" Margin="2"/>
 
             </StackPanel>
 
@@ -75,24 +75,26 @@
             </StackPanel>
 
             <Label Content="{Binding ErrorMessage, Mode=OneWay}"  FontSize="15" Height="30" VerticalAlignment="Bottom"  
-           Background="white" Grid.Row="1" Grid.Column="1">
+            Grid.Row="1" Grid.Column="1">
                 
             </Label>
 
             <TextBlock x:Name="curr_user" FontSize="15" Text="{Binding CurrentUsername, Mode=OneWay}"
                    VerticalAlignment="Top"
                    TextAlignment="Left"
-                   Background="White" 
+                    
                      Grid.Row="2" Grid.Column="1" Margin="0,95,0,0"></TextBlock>
 
-        <TextBlock x:Name="curr_user_group" Text="{Binding Role, Mode=OneWay}"
+            <TextBlock x:Name="curr_user_group" Text="{Binding Role, Mode=OneWay}"
                    FontSize="15"
                    VerticalAlignment="Top"
                    TextAlignment="Left"
-                   Background="White" 
+                   
                      Grid.Row="2" Grid.Column="1" Margin="0,120,0,0" />
 
-      </Grid>
+        
+
+    </Grid>
           
           
 </UserControl>

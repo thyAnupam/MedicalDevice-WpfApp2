@@ -22,12 +22,12 @@ namespace WpfApp2.ViewModels
         private MoDbContext _context;
         private User _user;
         //----->Add User Details below----------------------
-        private string _username;
-        private string _password;
-        private string _email;
-        private string _firstname;
-        private string _lastname;
-        private string _usergroup;
+        private string _username="";
+        private string _password="";
+        private string _email = "";
+        private string _firstname = "";
+        private string _lastname = "";
+        private string _usergroup = "";
 
 
 

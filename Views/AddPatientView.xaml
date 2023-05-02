@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:WpfApp2.Views"
+             xmlns:local="clr-namespace:WpfApp2.Views" xmlns:viewmodels="clr-namespace:WpfApp2.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:AddPatientViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -42,25 +42,8 @@
         <TextBlock Text="Height:" Grid.Row="4" Grid.Column="0" Margin="10"/>
         <TextBox x:Name="HeightTextBox" Grid.Row="4" Grid.Column="1" Margin="5" Width="150" HorizontalAlignment="Left"/>
 
-        <Button x:Name="AddPatientButton" FontSize="15" Grid.Row="5" Grid.ColumnSpan="2" Content="Add Patient" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Background="#3A82D6" Width="100" Click="AddPatientButton_Click">
-            <Button.Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Effect">
-                        <Setter.Value>
-                            <DropShadowEffect Color="Transparent" BlurRadius="0" ShadowDepth="0"/>
-                        </Setter.Value>
-                    </Setter>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Effect">
-                                <Setter.Value>
-                                    <DropShadowEffect Color="#FF007ACC" BlurRadius="10" ShadowDepth="0"/>
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
+        <Button x:Name="AddPatientButton" FontSize="15" Grid.Row="5" Grid.Column="1" Content="Add Patient" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Background="#3A82D6" Width="120" Command="{Binding AddPatientCommand}">
+            
         </Button>
 
         <StatusBar x:Name="StatusBar" Grid.Row="6" Grid.ColumnSpan="2" Margin="10">

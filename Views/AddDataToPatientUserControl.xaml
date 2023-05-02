@@ -21,11 +21,14 @@
         
         
         
-        <MediaElement x:Name="mediaElement" Grid.Column="0" Grid.Row="0"/>
-        <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button x:Name="recordButton" Content="Record" Margin="5" Click="recordButton_Click"/>
-            <Button x:Name="captureButton" Content="Capture" Margin="5" Click="captureButton_Click"/>
+        <Image x:Name="img" Grid.Column="0" Grid.Row="0"/>
+        <StackPanel Orientation="Vertical" Margin="5" Width="150" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Button x:Name="recordButton" Content="Record" Margin="5" Click="btnRecord_Click" />
+            <Button x:Name="captureButton" Content="Capture" Margin="5" />
+            <ComboBox x:Name="ddlVideoDevices" HorizontalContentAlignment="Center"></ComboBox>
+            
         </StackPanel>
+        <Label Name="lblStatus" Grid.Row="1" Grid.Column="0" FontSize="12" FontWeight="Bold"></Label>
     </Grid>
 </UserControl>
 

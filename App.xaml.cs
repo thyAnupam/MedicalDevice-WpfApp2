@@ -38,8 +38,6 @@ namespace WpfApp2
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            //context = container.Resolve<MoDbContext>();
-
             var mainW = new MainWindow(context);
             mainW.Show();
         }

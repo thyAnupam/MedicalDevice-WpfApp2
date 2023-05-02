@@ -17,9 +17,9 @@
         
         
             <StackPanel x:Name="SideMenu" Grid.Column="0" Background="#0140c1" >
-            <Button x:Name="SearchPatientButton" Content="Search Patient" Command="{Binding SearchPatientCommand}"  Margin="10" Height="30" Background="#81d4f9" FontSize="15"/>
-            <Button x:Name="AddPatientButton" Content="Add Patient" Command="{Binding AddPatientCommand}" Margin="10" Height="30" Background="#81d4f9" FontSize="15"/>
-            <Button x:Name="UserManagementButton" Content="User Management" Command="{Binding UserManagementCommand}" Margin="10" Height="30" Background="#81d4f9" FontSize="15"/>
+            <Button x:Name="SearchPatientButton" Content="Search Patient" Command="{Binding SearchPatientCommand}"  Margin="10" Height="30" Background="#81d4f9" FontSize="15" Foreground="Black"/>
+            <Button x:Name="AddPatientButton" Content="Add Patient" Command="{Binding AddPatientCommand}" Margin="10" Height="30" Background="#81d4f9" FontSize="15" Foreground="Black"/>
+            <Button x:Name="UserManagementButton" Content="User Management" Command="{Binding UserManagementCommand}" Margin="10" Height="30" Background="#81d4f9" FontSize="15" Foreground="Black"/>
             </StackPanel>
         
 

@@ -61,6 +61,42 @@ namespace WpfApp2.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;Patient is added&quot;.
+        /// </summary>
+        public static string PatientAdded {
+            get {
+                return ResourceManager.GetString("PatientAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;Please enter every patient details&quot;.
+        /// </summary>
+        public static string ProvideAllPatientDetails {
+            get {
+                return ResourceManager.GetString("ProvideAllPatientDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;Please enter everything&quot;.
+        /// </summary>
+        public static string ProvideAllUserDetails {
+            get {
+                return ResourceManager.GetString("ProvideAllUserDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;User is added&quot;.
+        /// </summary>
+        public static string UserAdded {
+            get {
+                return ResourceManager.GetString("UserAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;User not found&quot;.
         /// </summary>
         public static string UserNotFound {

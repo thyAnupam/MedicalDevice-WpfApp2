@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -20,17 +14,19 @@ using FFMpegCore;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using System.Drawing;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
+using Microsoft.Win32;
+using System.Security.Cryptography;
+using System.Windows.Media;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 
 
-
-namespace WpfApp2.Views
+namespace WpfApp2.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for AddDataToPatientUserControl.xaml
-    /// </summary>
-    public partial class AddDataToPatientUserControl : UserControl
+    internal class AddDataToPatientViewModel: ViewModelBase
     {
-        //private readonly Webcam webcam;
         bool isCameraRunning = false;
         bool isMicrophoneJustStarted = false;
         VideoCapture capture;
@@ -42,25 +38,70 @@ namespace WpfApp2.Views
         Bitmap image;
         bool isUsingImageAlternate = false;
         DispatcherTimer recordingTimer;
-
-        public AddDataToPatientUserControl()
+        private ObservableCollection<string> _videoDevices=new ObservableCollection<string>();
+        public ObservableCollection<string> VideoDevices
         {
-            InitializeComponent();
-            var videoDevices = new List<DsDevice>(DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice));
-            foreach (var device in videoDevices)
-            {
-                ddlVideoDevices.Items.Add(device.Name);
-            }
-            recordingTimer = new DispatcherTimer();
-            recordingTimer.Tick += recordingTimer_Tick;
-            //dispatcherTimer.Interval = newTimeSpan(0, 0, 1);
-            //dispatcherTimer.Start();
+            get => _videoDevices; 
+
+        }
+
+        private BitmapImage img;
+
+        public BitmapImage IMG
+        {
+            get => img; set => SetProperty(ref img, value);
         }
 
 
-        private async void btnRecord_Click(object sender, EventArgs e)
+        private string selectedDevice;
+
+        public string SelectedDevice
         {
-            if (ddlVideoDevices.SelectedIndex < 0)
+            get => selectedDevice; set => SetProperty(ref selectedDevice, value);
+        }
+
+        private string _lblStatus;
+
+        public string LblStatus
+        {
+            get => _lblStatus;
+            set => SetProperty(ref _lblStatus, value);
+        }
+
+        private string _buttonText="Record";
+
+        public string ButtonText
+        {
+            get => _buttonText;
+            set => SetProperty(ref _buttonText, value);
+        }
+        public AddDataToPatientViewModel()
+        {
+            
+            LoadDevices();
+            
+            recordingTimer = new DispatcherTimer();
+            recordingTimer.Tick += recordingTimer_Tick;
+
+            RecordCommand = new RelayCommand(btnRecord_Click);
+            ExportCommand = new RelayCommand(CreateSave);
+            
+        }
+        public ICommand ExportCommand { get; } 
+        private void LoadDevices()
+        {
+            var videoDevices = new List<DsDevice>(DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice));
+            foreach (var device in videoDevices)
+            {
+                _videoDevices.Add(device.Name);
+            }
+
+        }
+
+        public ICommand RecordCommand { get; }
+        private async void btnRecord_Click()
+        {
+            if (selectedDevice==null)
             {
                 MessageBox.Show("Please choose a video device as the Video Source.", "Video Source Not Defined", MessageBoxButton.OK);
                 return;
@@ -68,7 +109,7 @@ namespace WpfApp2.Views
 
             if (!isCameraRunning)
             {
-                lblStatus.Content = "Starting recording...";
+                LblStatus = "Starting recording...";
 
                 StartCamera();
                 StartMicrophone();
@@ -76,15 +117,16 @@ namespace WpfApp2.Views
                 recordingTimer.IsEnabled = true;
                 recordingTimer.Start();
 
-                lblStatus.Content = "Recording...";
+                LblStatus = "Recording...";
             }
             else
             {
                 StopCamera();
                 StopMicrophone();
 
-                lblStatus.Content = "Recording ended.";
-                
+                LblStatus = "Recording ended.";
+                IMG = null;
+
 
                 await OutputRecordingAsync();
             }
@@ -96,10 +138,10 @@ namespace WpfApp2.Views
 
             isCameraRunning = true;
 
-            recordButton.Content = "Stop";
+            ButtonText = "Stop";
 
 
-            int deviceIndex = ddlVideoDevices.SelectedIndex;
+            int deviceIndex = VideoDevices.IndexOf(SelectedDevice);
             capture = new VideoCapture(deviceIndex);
             capture.Open(deviceIndex);
 
@@ -109,7 +151,7 @@ namespace WpfApp2.Views
         {
             isCameraRunning = false;
 
-            recordButton.Content = "Start";
+            ButtonText = "Start";
 
             recordingTimer.Stop();
             recordingTimer.IsEnabled = false;
@@ -139,18 +181,13 @@ namespace WpfApp2.Views
 
                 if (outputVideo == null)
                 {
-                    lblStatus.Content = "Null recording. Please record again";
+                    LblStatus = "Null recording. Please record again";
 
                 }
                 else
                 {
                     FFMpeg.ReplaceAudio("video.mp4", "sound.wav", outputPath, true);
-
-                    //VideoRepository videoRepository = new VideoRepository();
-                    //string result = videoRepository.SaveVideo(outputVideo);
-
-
-                    lblStatus.Content = $"Recording saved to local disk with the file name {outputPath}.";
+                    LblStatus = $"Recording saved to local disk with the file name {outputPath}";
 
                 }
 
@@ -159,7 +196,7 @@ namespace WpfApp2.Views
             }
             catch (Exception ex)
             {
-                lblStatus.Content = "Recording cannot be saved.";
+                LblStatus = "Recording cannot be saved.";
 
                 MessageBox.Show($"Recording cannot be saved because {ex.Message}", "Error on Recording Saving", MessageBoxButton.OK);
             }
@@ -212,6 +249,50 @@ namespace WpfApp2.Views
             }
         }
 
+
+        private void CreateSave()
+        {
+            // Create a SaveFileDialog to prompt the user for the file save location
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Filter = "PDF Files (.pdf)|.pdf";
+            if (saveDialog.ShowDialog() == true)
+            {
+                // Get the selected file path from the save dialog
+                string filePath = saveDialog.FileName;
+
+                // Create a new PDF document
+                PdfDocument document = new PdfDocument();
+
+                // Create a new page
+                PdfPage page = document.AddPage();
+
+                // Create a graphics object for the page
+                XGraphics gfx = XGraphics.FromPdfPage(page);
+
+                // Create a new XFont for the text
+                XFont font = new XFont("Arial", 12, XFontStyle.Regular);
+                XFont subheadingFont = new XFont("Arial", 8, XFontStyle.BoldItalic);
+                // Create a new XImage from the sample image file
+                XImage image = XImage.FromFile("images.jpg");
+
+                // Draw "Hello World" text on the page
+                gfx.DrawString("Patient Name: Arjun Bhagwat", font, XBrushes.Black, new XPoint(50, 50));
+                gfx.DrawString("Patient DOB: 12/07/2000", font, XBrushes.Black, new XPoint(50, 80));
+                gfx.DrawString("Patient Gender: Male", font, XBrushes.Black, new XPoint(50, 110));
+                gfx.DrawString("Patient Report Exported By: CURRENT_USER", font, XBrushes.Black, new XPoint(50, 140));
+                gfx.DrawString("By Carl Zeiss India - CARIn Bangalore ", subheadingFont, XBrushes.Blue, new XPoint(420, 140));
+
+                // Draw the image on the page
+                gfx.DrawImage(image, 50, 200);
+
+                // Save the PDF document to the selected file path
+                document.Save(filePath);
+
+                // Close the document
+                document.Close();
+            }
+
+        }
         private void recordingTimer_Tick(object sender, EventArgs e)
         {
             if (capture.IsOpened())
@@ -231,17 +312,17 @@ namespace WpfApp2.Views
                         {
                             isUsingImageAlternate = false;
                             image = BitmapConverter.ToBitmap(frame);
-                            
+
                         }
 
-                        img.Source = isUsingImageAlternate ? BitmapToImageSource(imageAlternate) : BitmapToImageSource(image);
+                        IMG = isUsingImageAlternate ? BitmapToImageSource(imageAlternate) : BitmapToImageSource(image);
 
                         outputVideo.Write(frame);
                     }
                 }
                 catch (Exception)
                 {
-                    img.Source = null;
+                    IMG = null;
                 }
                 finally
                 {
@@ -270,40 +351,6 @@ namespace WpfApp2.Views
             }
         }
 
-            
 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

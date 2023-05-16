@@ -12,6 +12,7 @@ using WpfApp2.ViewModels.Services;
 using static Azure.Core.HttpHeader;
 using System.ComponentModel;
 using System.Windows.Media.Animation;
+using WpfApp2.Resources;
 
 namespace WpfApp2.ViewModels
 {
@@ -114,14 +115,14 @@ namespace WpfApp2.ViewModels
 
             if (uname == "" || fname == "" || lname == "" || pass == "" || email == "" || userGroup == "")
             {
-                ErrorMessage = "Please enter everything";
+                ErrorMessage = Resource1.ProvideAllUserDetails;
             }
 
             else
             {
                 User user = new User { Username = uname, FirstName = fname, LastName = lname, Password = pass, Email = email, RoleId = GetRole(UserGroup)};
 
-                _context.AddAsync(user);
+                _context.Users.AddAsync(user);
                 _context.SaveChanges();
 
                 Username = "";
@@ -131,7 +132,7 @@ namespace WpfApp2.ViewModels
                 Email = "";
                 UserGroup = "";
 
-                ErrorMessage = "User added";            
+                ErrorMessage = Resource1.UserAdded;            
             }
 
         }

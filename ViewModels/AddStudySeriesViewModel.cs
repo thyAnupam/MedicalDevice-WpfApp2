@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Xaml.Behaviors.Media;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -17,12 +19,11 @@ namespace WpfApp2.ViewModels
         
         private readonly INavigationService _navigationService;
         private ObservableCollection<string> _studies;
+        private ObservableCollection<string> _series;
 
         private string studyName = "";
         private string seriesName = "";
         
-
-
         public string StudyName
         {
             get => studyName;
@@ -47,7 +48,7 @@ namespace WpfApp2.ViewModels
             }
         }
 
-        private ObservableCollection<string> _series = new ObservableCollection<string>();
+        
         public ObservableCollection<string> Series
         {
             get => _series;
@@ -57,12 +58,39 @@ namespace WpfApp2.ViewModels
                 OnPropertyChanged(nameof(Series));
             }
         }
+
+        private string _selectedstudy="";
+        public string SelectedStudy
+        {
+            get => _selectedstudy;
+            set
+            {
+                _selectedstudy = value;
+                OnPropertyChanged(nameof(SelectedStudy));
+            }
+        }
+
+        private string errmsg;
+        public string ErrorMessage
+        {
+            get => errmsg;
+            set
+            {
+                SetProperty(ref errmsg, value);
+                OnPropertyChanged(nameof(ErrorMessage));
+            }
+        }
+
+
+
         private MoDbContext _context;
 
+        private int _patientID;
         public AddStudySeriesViewModel(int PatientId, INavigationService navigationService)
         {
             _context = new MoDbContext();
-            LoadStudies(PatientId);
+            _patientID = PatientId;
+            LoadStudies(_patientID);
             _navigationService = navigationService;
             AddDataCommand = new RelayCommand(GoToData);
             AddSeriesCommand = new RelayCommand(AddSeries);
@@ -88,30 +116,54 @@ namespace WpfApp2.ViewModels
 
         public void AddStudy()
         {
-            var st = new Study { StudyName = studyName, Created = DateTime.Today, PatientId = 1 };
+            var st = new Study { StudyName = studyName, Created = DateTime.Today, PatientId = _patientID };
             _context.Studies.Add(st);
             _context.SaveChanges();
-            LoadStudies(1);
+            StudyName = "";
+            LoadStudies(_patientID);
 
         }
 
         public void AddSeries()
         {
-            var st = new Series { SeriesName=seriesName, Created=DateTime.Today, StudyId=5};
-            _context.Series.Add(st);
-            _context.SaveChanges();
-            LoadSeries(5);
+            if(SelectedStudy == "")
+            {
+                ErrorMessage = "Please select a study";
+            }
+            else
+            {
+                var st = new Series { SeriesName = seriesName, Created = DateTime.Today, StudyId = GetStudyId(SelectedStudy) };
+                _context.Series.Add(st);
+                _context.SaveChanges();
+
+                SeriesName = "";
+                LoadSeries(GetStudyId(SelectedStudy));
+                ErrorMessage = "";
+
+            }
+            
 
         }
 
 
         public void GoToData()
         {
-            _navigationService.NavigateTo(new AddDataToPatientView());
+            _navigationService.NavigateTo(new AddDataToPatientView(_patientID, 1));
         }
 
+        
 
+        public int GetStudyId(string s)
+        {
+            int id=-1;
+            using(var context = new MoDbContext())
+            {
+                id = context.Studies.First(x => x.StudyName==s).StudyId;
+            }
 
+            return id;
+
+        }
 
     }
 }

@@ -21,7 +21,8 @@ using System.Security.Cryptography;
 using System.Windows.Media;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
-
+using WpfApp2.Repository;
+using WpfApp2.Repository.Models;
 
 namespace WpfApp2.ViewModels
 {
@@ -32,6 +33,9 @@ namespace WpfApp2.ViewModels
         VideoCapture capture;
         VideoWriter outputVideo;
         Recording audioRecorder;
+        private int _patientID;
+        private int _seriesID;
+        private Patient CurrentPatient;
 
         Mat frame;
         Bitmap imageAlternate;
@@ -75,9 +79,12 @@ namespace WpfApp2.ViewModels
             get => _buttonText;
             set => SetProperty(ref _buttonText, value);
         }
-        public AddDataToPatientViewModel()
+
+
+        public AddDataToPatientViewModel(int patientId, int seriesID)
         {
-            
+            _patientID = patientId;
+            _seriesID = seriesID;
             LoadDevices();
             
             recordingTimer = new DispatcherTimer();
@@ -85,9 +92,10 @@ namespace WpfApp2.ViewModels
 
             RecordCommand = new RelayCommand(btnRecord_Click);
             ExportCommand = new RelayCommand(CreateSave);
-            
+            CaptureCommand = new RelayCommand(Capture); 
         }
-        public ICommand ExportCommand { get; } 
+        public ICommand ExportCommand { get; }
+        public ICommand CaptureCommand { get; }
         private void LoadDevices()
         {
             var videoDevices = new List<DsDevice>(DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice));
@@ -252,6 +260,25 @@ namespace WpfApp2.ViewModels
 
         private void CreateSave()
         {
+            using(var context=new MoDbContext())
+            {
+                CurrentPatient = context.Patients.FindAsync(_patientID).Result;
+            }
+
+            string Firstname = CurrentPatient.Firstname;
+            string Lastname = CurrentPatient.Lastname;
+            string gender="Not assigned";
+            if (CurrentPatient.Gender == 1)
+            {
+                gender = "Male";
+            }
+            if (CurrentPatient.Gender == 2)
+            {
+                gender = "Female";
+            }
+            string d = CurrentPatient.Dob.ToString();
+
+
             // Create a SaveFileDialog to prompt the user for the file save location
             SaveFileDialog saveDialog = new SaveFileDialog();
             saveDialog.Filter = "PDF Files (.pdf)|.pdf";
@@ -273,12 +300,12 @@ namespace WpfApp2.ViewModels
                 XFont font = new XFont("Arial", 12, XFontStyle.Regular);
                 XFont subheadingFont = new XFont("Arial", 8, XFontStyle.BoldItalic);
                 // Create a new XImage from the sample image file
-                XImage image = XImage.FromFile("images.jpg");
+                XImage image = XImage.FromFile("C:\\MedicalDevice\\Images\\output_2023_05_18_13_43_33.jpeg");
 
                 // Draw "Hello World" text on the page
-                gfx.DrawString("Patient Name: Arjun Bhagwat", font, XBrushes.Black, new XPoint(50, 50));
-                gfx.DrawString("Patient DOB: 12/07/2000", font, XBrushes.Black, new XPoint(50, 80));
-                gfx.DrawString("Patient Gender: Male", font, XBrushes.Black, new XPoint(50, 110));
+                gfx.DrawString($"Patient Name: {Firstname} {Lastname}", font, XBrushes.Black, new XPoint(50, 50));
+                gfx.DrawString($"Patient DOB: {d}", font, XBrushes.Black, new XPoint(50, 80));
+                gfx.DrawString($"Patient Gender: {gender}", font, XBrushes.Black, new XPoint(50, 110));
                 gfx.DrawString("Patient Report Exported By: CURRENT_USER", font, XBrushes.Black, new XPoint(50, 140));
                 gfx.DrawString("By Carl Zeiss India - CARIn Bangalore ", subheadingFont, XBrushes.Blue, new XPoint(420, 140));
 
@@ -292,6 +319,35 @@ namespace WpfApp2.ViewModels
                 document.Close();
             }
 
+        }
+
+        private void Capture()
+        {
+            if(isCameraRunning)
+            {
+                if (imageAlternate != null)
+                {
+                    var c = imageAlternate;
+                    string outputPath = $"C:\\MedicalDevice\\Images\\output_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}.jpeg";
+                    c.Save(outputPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                }
+                else if (image != null)
+                {
+                    var c = image;
+                    string outputPath = $"C:\\MedicalDevice\\Images\\output_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}.jpeg";
+                    c.Save(outputPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Please start recording.", "Video Source Not Defined", MessageBoxButton.OK);
+                return;
+
+            }
+            
+            
         }
         private void recordingTimer_Tick(object sender, EventArgs e)
         {

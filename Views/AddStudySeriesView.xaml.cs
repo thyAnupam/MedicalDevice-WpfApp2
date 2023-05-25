@@ -23,16 +23,13 @@ namespace WpfApp2.Views
     public partial class AddStudySeriesView : UserControl
     {
         
-        public AddStudySeriesView(INavigationService n)
+        public AddStudySeriesView(int id, INavigationService n)
         {
             InitializeComponent();
             
-            DataContext = new AddStudySeriesViewModel(1, n);
+            DataContext = new AddStudySeriesViewModel(id, n);
         }
 
-        private void lstStudies_SourceUpdated(object sender, DataTransferEventArgs e)
-        {
-
-        }
+        
     }
 }

@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfApp2.ViewModels;
+using WpfApp2.ViewModels.Services;
 
 namespace WpfApp2.Views
 {
@@ -20,9 +22,12 @@ namespace WpfApp2.Views
     /// </summary>
     public partial class SearchPatientView : UserControl
     {
-        public SearchPatientView()
+        public SearchPatientView(INavigationService n)
         {
             InitializeComponent();
+            DataContext = new SearchPatientViewModel(n);
         }
+
+      
     }
 }

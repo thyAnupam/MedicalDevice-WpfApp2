@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Windows.Input;
 using WpfApp2.Repository;
 using WpfApp2.Repository.Models;
@@ -12,7 +13,7 @@ namespace WpfApp2.ViewModels
     {
         private string firstName = "";
         private string lastName = "";
-        private DateTime dob=DateTime.MinValue;
+        private DateTime? dob=null;
         
         private int height=0;
         private string errmsg;
@@ -38,7 +39,7 @@ namespace WpfApp2.ViewModels
             get => lastName;
             set => SetProperty(ref lastName, value);
         }
-        public DateTime DOB
+        public DateTime? DOB
         {
             get => dob;
             set => SetProperty(ref dob, value);
@@ -78,7 +79,7 @@ namespace WpfApp2.ViewModels
 
         private bool AllFieldsNotNull()
         {
-            if (FirstName != "" && LastName!="" && DOB != DateTime.MinValue && Height !=0)
+            if (FirstName != "" && LastName!="" && DOB != null && Height !=0)
                 return true;
 
 
@@ -88,20 +89,21 @@ namespace WpfApp2.ViewModels
         public void AddPatient()
         {
             //Add patient to context
-            
+            int id;
             if (AllFieldsNotNull())
             {
-                Patient p = new Patient {Firstname=FirstName, Lastname=LastName, Dob=DOB, Gender=SelectedMode+1, Height=Height};
+                Patient p = new Patient {Firstname=FirstName, Lastname=LastName, Dob=(DateTime)DOB, Gender=SelectedMode+1, Height=Height};
                 //Add p to context
 
                 using(var context = new MoDbContext())
                 {
                     context.Patients.Add(p);
                     context.SaveChanges();
+                    id = context.Patients.FirstOrDefaultAsync(x=> x.Firstname==FirstName && x.Lastname==LastName && x.Dob==DOB).Result.PatientId;
                 }
-
+                
                 ErrorMessage = Resource1.PatientAdded;
-                _navigationService.NavigateTo(new AddStudySeriesView(_navigationService));
+                _navigationService.NavigateTo(new AddStudySeriesView(id, _navigationService));
             }
 
             else

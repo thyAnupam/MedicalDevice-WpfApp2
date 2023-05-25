@@ -25,10 +25,10 @@ namespace WpfApp2.Views
     {
         
 
-        public AddDataToPatientView()
+        public AddDataToPatientView(int PatientID, int seriesID)
         {
             InitializeComponent();
-            DataContext = new AddDataToPatientViewModel();
+            DataContext = new AddDataToPatientViewModel(PatientID, seriesID);
             
         }
 

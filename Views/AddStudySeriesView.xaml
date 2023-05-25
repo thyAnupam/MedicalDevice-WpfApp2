@@ -33,9 +33,10 @@
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical">
             <StackPanel Orientation="Horizontal" >
                 <TextBlock Text="Select study to add series:" FontSize="13" FontFamily="MS Reference Sans Serif" Margin="10"/>
-                <ComboBox Width="200" ItemsSource="{Binding Studies}" FontSize="15" FontFamily="MS Reference Sans Serif" />
+                <ComboBox Width="200" ItemsSource="{Binding Studies}" FontSize="15" FontFamily="MS Reference Sans Serif" SelectedItem="{Binding SelectedStudy, Mode=TwoWay}"/>
             </StackPanel>
 
+            <Label Content="{Binding ErrorMessage}" FontSize="12" Foreground="Red" HorizontalContentAlignment="Center"></Label>
 
             <ListBox x:Name="lstSeries" Margin="10" Height="380" ItemsSource="{Binding Series}" FontSize="20" FontFamily="MS Reference Sans Serif">
 

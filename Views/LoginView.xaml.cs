@@ -12,21 +12,18 @@ namespace WpfApp2.Views
     /// <summary>
     /// Interaction logic for LoginView.xaml
     /// </summary>
-    public partial class LoginView : Page, INavigationService
+    public partial class LoginView : Page
     {
         
         MoDbContext context;
-        public LoginView(MoDbContext _context)
+
+        public LoginView(MoDbContext _context, INavigationService n)
         {
             InitializeComponent();
             context = _context;               
-            DataContext = new LoginViewModel(context, this);  
+            DataContext = new LoginViewModel(context, n);  
         }
         
-        public void NavigateTo(object page)
-        {
-            NavigationService.Navigate(page);
-        }
 
     }
 }

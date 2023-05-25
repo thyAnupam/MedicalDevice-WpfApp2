@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp2.Repository;
 using WpfApp2.ViewModels;
+using WpfApp2.ViewModels.Services;
 using WpfApp2.Views;
 
 namespace WpfApp2
@@ -21,7 +22,7 @@ namespace WpfApp2
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INavigationService
     {
         MoDbContext _moDbContext;
         
@@ -30,9 +31,12 @@ namespace WpfApp2
             InitializeComponent();
             
             _moDbContext = context;
-            MainFrame.Content = new LoginView(_moDbContext);  ///Uri("Views/LoginView.xaml", UriKind.RelativeOrAbsolute);   
+            MainFrame.Content = new LoginView(_moDbContext, this);  ///Uri("Views/LoginView.xaml", UriKind.RelativeOrAbsolute);   
         }
 
-
+        public void NavigateTo(object page)
+        {
+            MainFrame.Content = page;
+        }
     }
 }

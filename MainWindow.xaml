@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp2"
         mc:Ignorable="d"
-        Title="MainWindow" WindowState="Maximized"
+        Title="MainWindow" WindowState="Maximized" WindowStyle="None"
         xmlns:vw="clr-namespace:WpfApp2.Views"
          xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"

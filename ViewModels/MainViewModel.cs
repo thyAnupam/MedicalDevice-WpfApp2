@@ -16,14 +16,17 @@ namespace WpfApp2.ViewModels
         private readonly INavigationService _navigationService;
         private MoDbContext _context;
         private User _user;
+        private readonly INavigationService _mainWindowNavigation;
 
-        public MainViewModel(MoDbContext context, INavigationService navigationService, User user) //IAuthService authService
+        public MainViewModel(MoDbContext context, INavigationService navigationService, User user, INavigationService m) //IAuthService authService
         {
             _navigationService = navigationService;
             _context = context;
+            _mainWindowNavigation = m;
             SearchPatientCommand = new RelayCommand(ShowSearch);
             AddPatientCommand = new RelayCommand(ShowAddPatient);
             UserManagementCommand = new RelayCommand(ShowUserManagement);
+            LogOutCommand = new RelayCommand(Logout);
             _user = user;
 
         }
@@ -32,10 +35,12 @@ namespace WpfApp2.ViewModels
         public ICommand AddPatientCommand { get; }
         public ICommand UserManagementCommand { get; }
 
+        public ICommand LogOutCommand { get; }
+
         public void ShowSearch()
         {
 
-            _navigationService.NavigateTo(new SearchPatientView());
+            _navigationService.NavigateTo(new SearchPatientView(_navigationService));
 
         }
 
@@ -45,6 +50,12 @@ namespace WpfApp2.ViewModels
             _navigationService.NavigateTo(addPatientView);
 
 
+        }
+
+        public void Logout()
+        {
+            LoginView newlogin = new LoginView(_context, _mainWindowNavigation);
+            _mainWindowNavigation.NavigateTo(newlogin);
         }
 
         public void ShowUserManagement()

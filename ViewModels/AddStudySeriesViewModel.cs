@@ -148,7 +148,7 @@ namespace WpfApp2.ViewModels
 
         public void GoToData()
         {
-            _navigationService.NavigateTo(new AddDataToPatientView(_patientID, 1));
+            _navigationService.NavigateTo(new AddDataToPatientView(_patientID, 2));
         }
 
         

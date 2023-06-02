@@ -13,6 +13,7 @@ using static Azure.Core.HttpHeader;
 using System.ComponentModel;
 using System.Windows.Media.Animation;
 using WpfApp2.Resources;
+using log4net;
 
 namespace WpfApp2.ViewModels
 {
@@ -30,7 +31,7 @@ namespace WpfApp2.ViewModels
         private string _lastname = "";
         private string _usergroup = "";
 
-
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public AdminViewModel(MoDbContext context, User user) //IAuthService authService
         {
@@ -42,7 +43,7 @@ namespace WpfApp2.ViewModels
             if (user.RoleId == 1) { _role = "Administrator"; }
             if (user.RoleId == 2) { _role = "Doctor"; }
             if (user.RoleId == 3) { _role = "Operator"; }
-
+            log4net.Config.XmlConfigurator.Configure();
         }
 
         public string CurrentUsername
@@ -122,8 +123,19 @@ namespace WpfApp2.ViewModels
             {
                 User user = new User { Username = uname, FirstName = fname, LastName = lname, Password = pass, Email = email, RoleId = GetRole(UserGroup)};
 
-                _context.Users.AddAsync(user);
-                _context.SaveChanges();
+                try
+                {
+                    _context.Users.AddAsync(user);
+                    _context.SaveChanges();
+                    log.Info($"User {user.Username} added");
+                    ErrorMessage = Resource1.UserAdded;
+
+                }
+                catch (Exception ex)
+                {
+                    ErrorMessage = ex.Message;
+                    log.Error(ex.Message);
+                }
 
                 Username = "";
                 FirstName = "";
@@ -132,7 +144,7 @@ namespace WpfApp2.ViewModels
                 Email = "";
                 UserGroup = "";
 
-                ErrorMessage = Resource1.UserAdded;            
+                
             }
 
         }

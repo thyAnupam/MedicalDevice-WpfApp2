@@ -9,6 +9,8 @@ using System.Windows.Navigation;
 using WpfApp2.Views;
 using Microsoft.EntityFrameworkCore.Metadata;
 using WpfApp2.ViewModels.Services;
+using log4net;
+using System.Linq;
 
 namespace WpfApp2.ViewModels
 {
@@ -20,24 +22,35 @@ namespace WpfApp2.ViewModels
         private string _password;
         private string _errorMessage;
         private MoDbContext _context;
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public LoginViewModel(MoDbContext context, INavigationService navigationService) //IAuthService authService
         {
             _navigationService = navigationService;
             _context = context;
             LoginCommand = new RelayCommand(Login);
+            log4net.Config.XmlConfigurator.Configure();
         }
 
         public string Username
         {
             get => _username;
-            set => SetProperty(ref _username, value);
+            set
+            {
+                _username = value;
+                OnPropertyChanged(nameof(Username));
+            }
         }
 
         public string Password
         {
             get => _password;
-            set => SetProperty(ref _password, value);
+            set
+            {
+                _password = value;
+                OnPropertyChanged(nameof(Password));
+
+            }
         }
 
         public string ErrorMessage
@@ -48,28 +61,27 @@ namespace WpfApp2.ViewModels
 
         public ICommand LoginCommand { get; }
 
-        public async void Login()
+        public void Login()
         {
             ErrorMessage = "Loading...";
-            var userfound = await _context.Users.AnyAsync(u => u.Username == _username && u.Password == _password); ///_authService.AuthenticateAsync(Username, Password);
+            var userfound =  _context.Users.Any(u => u.Username == Username && u.Password == Password); ///_authService.AuthenticateAsync(Username, Password);
             if (userfound)
             {
-                User curr = await _context.Users.FirstOrDefaultAsync(u => u.Username == _username && u.Password == _password);
+                User curr =  _context.Users.FirstOrDefault(u => u.Username == Username && u.Password == Password);
 
-
+                log.Info($"User {curr.Username} logged in");
                 GrantAccess(new User { FirstName = curr.FirstName, LastName = curr.LastName, Email = curr.Email, Username = curr.Username, RoleId = curr.RoleId });
-
-            }
-
-            else
-            {
                 
-                ErrorMessage = Resource1.UserNotFound;
-
-                _username = "";
-                _password = "";
-
             }
+
+            
+            ErrorMessage = Resource1.UserNotFound;
+            log.Error($"Login failed");
+            
+
+
+            return;
+           
         }
 
         public void GrantAccess(User u)

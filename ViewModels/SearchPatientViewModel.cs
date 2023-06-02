@@ -71,14 +71,31 @@ namespace WpfApp2.ViewModels
 
             if(SelectedParam == "First Name")
             {
-                var list = context.Patients.Where(x => x.Firstname.ToLower().StartsWith(s)).Select(x => new PatientViewModel(x, _navigationService));
-                Patients = new ObservableCollection<PatientViewModel>(list);
+                if (s != "")
+                {
+                    var list = context.Patients.Where(x => x.Firstname.ToLower().StartsWith(s)).Select(x => new PatientViewModel(x, _navigationService));
+                    Patients = new ObservableCollection<PatientViewModel>(list);
+                }
+                else
+                {
+                    Patients.Clear();
+                }
+                
 
             }
             else
             {
-                var list = context.Patients.Where(x => x.Lastname.ToLower().StartsWith(s)).Select(x => new PatientViewModel(x, _navigationService));
-                Patients = new ObservableCollection<PatientViewModel>(list);
+                if (s != "")
+                {
+                    var list = context.Patients.Where(x => x.Lastname.ToLower().StartsWith(s)).Select(x => new PatientViewModel(x, _navigationService));
+                    Patients = new ObservableCollection<PatientViewModel>(list);
+
+                }
+                else
+                {
+                    Patients.Clear();
+                }
+                
 
             }
 

@@ -23,6 +23,8 @@ using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using WpfApp2.Repository;
 using WpfApp2.Repository.Models;
+using log4net;
+using System.Linq;
 
 namespace WpfApp2.ViewModels
 {
@@ -43,6 +45,8 @@ namespace WpfApp2.ViewModels
         bool isUsingImageAlternate = false;
         DispatcherTimer recordingTimer;
         private ObservableCollection<string> _videoDevices=new ObservableCollection<string>();
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public ObservableCollection<string> VideoDevices
         {
             get => _videoDevices; 
@@ -79,20 +83,24 @@ namespace WpfApp2.ViewModels
             get => _buttonText;
             set => SetProperty(ref _buttonText, value);
         }
-
+        private MoDbContext context;
 
         public AddDataToPatientViewModel(int patientId, int seriesID)
         {
             _patientID = patientId;
             _seriesID = seriesID;
+            context = new MoDbContext();
+            
             LoadDevices();
             
+
             recordingTimer = new DispatcherTimer();
             recordingTimer.Tick += recordingTimer_Tick;
 
             RecordCommand = new RelayCommand(btnRecord_Click);
-            ExportCommand = new RelayCommand(CreateSave);
+            ExportCommand = new RelayCommand(CreateSavePDF);
             CaptureCommand = new RelayCommand(Capture); 
+            log4net.Config.XmlConfigurator.Configure();
         }
         public ICommand ExportCommand { get; }
         public ICommand CaptureCommand { get; }
@@ -182,7 +190,7 @@ namespace WpfApp2.ViewModels
 
         private async Task OutputRecordingAsync()
         {
-            string outputPath = $"output_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}.mp4";
+            string outputPath = $"C:\\Users\\X6AUJWAN\\Desktop\\Videos\\output_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}.mp4";
 
             try
             {
@@ -196,6 +204,13 @@ namespace WpfApp2.ViewModels
                 {
                     FFMpeg.ReplaceAudio("video.mp4", "sound.wav", outputPath, true);
                     LblStatus = $"Recording saved to local disk with the file name {outputPath}";
+                    var video = new Video {SeriesId=_seriesID, VideoName="oxdohxesh", VideoPath=outputPath };
+
+
+                    context.Videos.Add(video);
+                    context.SaveChanges();
+                    log.Info($"Video added to path {outputPath}");
+
 
                 }
 
@@ -258,12 +273,13 @@ namespace WpfApp2.ViewModels
         }
 
 
-        private void CreateSave()
+        private void CreateSavePDF()
         {
-            using(var context=new MoDbContext())
-            {
-                CurrentPatient = context.Patients.FindAsync(_patientID).Result;
-            }
+            Repository.Models.Image RetrievedImage;
+
+            CurrentPatient = context.Patients.FindAsync(_patientID).Result;
+            RetrievedImage = context.Images.FirstOrDefault(x => x.SeriesId == _seriesID);
+
 
             string Firstname = CurrentPatient.Firstname;
             string Lastname = CurrentPatient.Lastname;
@@ -277,6 +293,7 @@ namespace WpfApp2.ViewModels
                 gender = "Female";
             }
             string d = CurrentPatient.Dob.ToString();
+            
 
 
             // Create a SaveFileDialog to prompt the user for the file save location
@@ -300,7 +317,8 @@ namespace WpfApp2.ViewModels
                 XFont font = new XFont("Arial", 12, XFontStyle.Regular);
                 XFont subheadingFont = new XFont("Arial", 8, XFontStyle.BoldItalic);
                 // Create a new XImage from the sample image file
-                XImage image = XImage.FromFile("C:\\MedicalDevice\\Images\\output_2023_05_18_13_43_33.jpeg");
+                
+                
 
                 // Draw "Hello World" text on the page
                 gfx.DrawString($"Patient Name: {Firstname} {Lastname}", font, XBrushes.Black, new XPoint(50, 50));
@@ -310,7 +328,13 @@ namespace WpfApp2.ViewModels
                 gfx.DrawString("By Carl Zeiss India - CARIn Bangalore ", subheadingFont, XBrushes.Blue, new XPoint(420, 140));
 
                 // Draw the image on the page
-                gfx.DrawImage(image, 50, 200);
+                if (RetrievedImage != null)
+                {
+                    XImage image = XImage.FromFile(RetrievedImage.ImagePath);
+                    gfx.DrawImage(image, 50, 200);
+
+                }
+                
 
                 // Save the PDF document to the selected file path
                 document.Save(filePath);
@@ -330,13 +354,26 @@ namespace WpfApp2.ViewModels
                     var c = imageAlternate;
                     string outputPath = $"C:\\MedicalDevice\\Images\\output_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}.jpeg";
                     c.Save(outputPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    var k = new WpfApp2.Repository.Models.Image { SeriesId = _seriesID, ImageName = "oohjhhg", ImagePath = outputPath };
 
+                    
+                    context.Images.Add(k);
+                    context.SaveChanges();
+                    log.Info($"Image added to path {outputPath}");
+                    
                 }
                 else if (image != null)
                 {
                     var c = image;
                     string outputPath = $"C:\\MedicalDevice\\Images\\output_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}.jpeg";
                     c.Save(outputPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    var g = new WpfApp2.Repository.Models.Image { SeriesId = _seriesID, ImageName = "oohjhhg", ImagePath = outputPath }; //.Replace("\\", "#")
+
+
+                    context.Images.Add(g);
+                    context.SaveChanges();
+                    log.Info($"Image added to path {outputPath}"); //.Replace("#", "\\")
+
                 }
 
             }

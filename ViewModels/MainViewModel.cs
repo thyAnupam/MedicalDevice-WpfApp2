@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace WpfApp2.ViewModels
         private MoDbContext _context;
         private User _user;
         private readonly INavigationService _mainWindowNavigation;
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public MainViewModel(MoDbContext context, INavigationService navigationService, User user, INavigationService m) //IAuthService authService
         {
@@ -28,7 +30,7 @@ namespace WpfApp2.ViewModels
             UserManagementCommand = new RelayCommand(ShowUserManagement);
             LogOutCommand = new RelayCommand(Logout);
             _user = user;
-
+            log4net.Config.XmlConfigurator.Configure();
         }
 
         public ICommand SearchPatientCommand { get; }
@@ -56,6 +58,7 @@ namespace WpfApp2.ViewModels
         {
             LoginView newlogin = new LoginView(_context, _mainWindowNavigation);
             _mainWindowNavigation.NavigateTo(newlogin);
+            log.Info("User logged out");
         }
 
         public void ShowUserManagement()

@@ -24,13 +24,13 @@ namespace WpfApp2.Views
     public partial class MainView : Page, INavigationService
     {
         User _user;
-        MoDbContext _dbContext;
+        
         public MainView(MoDbContext context, User user, INavigationService mainWindowNavigation)
         {
             InitializeComponent();
             _user = user;
-            _dbContext = context;
-            DataContext = new MainViewModel(_dbContext, this, _user, mainWindowNavigation);
+            
+            DataContext = new MainViewModel(context, this, _user, mainWindowNavigation);
 
         }
         public void NavigateTo(object page)

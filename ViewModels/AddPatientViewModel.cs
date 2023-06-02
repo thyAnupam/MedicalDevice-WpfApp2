@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using log4net;
+using Microsoft.EntityFrameworkCore;
+using OpenCvSharp;
 using System;
 using System.Windows.Input;
 using WpfApp2.Repository;
@@ -14,7 +16,8 @@ namespace WpfApp2.ViewModels
         private string firstName = "";
         private string lastName = "";
         private DateTime? dob=null;
-        
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private int height=0;
         private string errmsg;
 
@@ -97,12 +100,24 @@ namespace WpfApp2.ViewModels
 
                 using(var context = new MoDbContext())
                 {
-                    context.Patients.Add(p);
-                    context.SaveChanges();
+                    try
+                    {
+                        context.Patients.Add(p);
+                        context.SaveChanges();
+                        ErrorMessage = Resource1.PatientAdded;
+                        log.Info("Patient added");
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorMessage = ex.Message;
+                        log.Error(ex.Message);
+
+                    }
+                    
                     id = context.Patients.FirstOrDefaultAsync(x=> x.Firstname==FirstName && x.Lastname==LastName && x.Dob==DOB).Result.PatientId;
                 }
                 
-                ErrorMessage = Resource1.PatientAdded;
+                
                 _navigationService.NavigateTo(new AddStudySeriesView(id, _navigationService));
             }
 
